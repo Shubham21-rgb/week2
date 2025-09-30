@@ -1,21 +1,29 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
+import pandas as pd
+import json
+import os
 
 app = FastAPI()
 
-# Root page for GET requests
-@app.get("/", response_class=HTMLResponse)
-async def homepage():
-    return """
-    <h1>Welcome to Metrics API</h1>
-    <p>Send POST requests to <code>/api/index</code> with JSON body:</p>
-    <pre>{
-  "regions": ["us-east", "eu-west"],
-  "threshold_ms": 180
-}</pre>
-    """
+# Enable CORS for all origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["POST"],
+    allow_headers=["*"]
+)
 
-# POST endpoint for computing metrics
+# Load telemetry data from x_r.json
+file_path = os.path.join(os.path.dirname(__file__), "q-vercel-latency.json")
+with open(file_path, "r") as f:
+    telemetry = json.load(f)
+
+df = pd.DataFrame(telemetry)
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
 @app.post("/api/index")
 async def compute_metrics(request: Request):
     body = await request.json()
@@ -38,7 +46,7 @@ async def compute_metrics(request: Request):
 
         avg_latency = region_df["latency_ms"].mean()
         p95_latency = region_df["latency_ms"].quantile(0.95)
-        avg_uptime = region_df["uptime"].mean()
+        avg_uptime = region_df["uptime_pct"].mean()
         breaches = (region_df["latency_ms"] > threshold).sum()
 
         response[region] = {
