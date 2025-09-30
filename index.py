@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import json
 import os
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -57,4 +58,11 @@ async def compute_metrics(request: Request):
             "breaches": int(breaches)
         }
 
-    return response
+    return JSONResponse(
+        content=response,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        }
+    )
