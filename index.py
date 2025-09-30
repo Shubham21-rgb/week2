@@ -70,7 +70,8 @@ async def compute_metrics(request: Request):
             "avg_latency": float(avg_latency),
             "p95_latency": float(p95_latency),
             "avg_uptime": float(avg_uptime),
-            "breaches": int(breaches)
+            "breaches": int(breaches),
+            "regions": region_df["region"].tolist()
         }
 
     # Include CORS headers in POST response
