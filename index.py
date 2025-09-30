@@ -1,18 +1,18 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import pandas as pd
 import json
 import os
-from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-# Enable CORS for all origins, all methods, all headers
+# Enable CORS for all origins, methods, headers
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # allow all domains
-    allow_methods=["*"],  # allow GET, POST, OPTIONS, etc.
-    allow_headers=["*"]
+    allow_origins=["*"],       # Allow all domains
+    allow_methods=["*"],       # Allow GET, POST, OPTIONS, etc.
+    allow_headers=["*"],       # Allow all headers
 )
 
 # Load telemetry data
@@ -26,6 +26,20 @@ df = pd.DataFrame(telemetry)
 async def root():
     return {"message": "Hello World"}
 
+# OPTIONS preflight handler for /api/index
+@app.options("/api/index")
+async def preflight(request: Request):
+    return JSONResponse(
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        },
+        content=""
+    )
+
+# POST endpoint for /api/index
 @app.post("/api/index")
 async def compute_metrics(request: Request):
     body = await request.json()
@@ -58,6 +72,7 @@ async def compute_metrics(request: Request):
             "breaches": int(breaches)
         }
 
+    # Include CORS headers in POST response
     return JSONResponse(
         content=response,
         headers={
