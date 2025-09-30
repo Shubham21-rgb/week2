@@ -1,0 +1,12 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+
+# Ignore local environment
+venv/
+
+# Ignore config files
+__pycache__/
+*.pyc
+
