@@ -24,7 +24,7 @@ df = pd.DataFrame(telemetry)
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Hello World its me Shubham"}
 
 # OPTIONS preflight handler for /api/index
 @app.options("/api/index")
