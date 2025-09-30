@@ -76,7 +76,7 @@ async def compute_metrics(request: Request):
 
     # Include CORS headers in POST response
     return JSONResponse(
-        content=response,
+        content={"regions": response},
         headers={
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "POST, OPTIONS",
