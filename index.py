@@ -13,6 +13,7 @@ app.add_middleware(
     allow_origins=["*"],       # Allow all domains
     allow_methods=["*"],       # Allow GET, POST, OPTIONS, etc.
     allow_headers=["*"],       # Allow all headers
+    expose_headers=["*"]
 )
 
 # Load telemetry data
