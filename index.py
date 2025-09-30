@@ -6,20 +6,21 @@ import os
 
 app = FastAPI()
 
-# Enable CORS for all origins
+# Enable CORS for all origins, all methods, all headers
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["POST"],
+    allow_origins=["*"],  # allow all domains
+    allow_methods=["*"],  # allow GET, POST, OPTIONS, etc.
     allow_headers=["*"]
 )
 
-# Load telemetry data from x_r.json
+# Load telemetry data
 file_path = os.path.join(os.path.dirname(__file__), "q-vercel-latency.json")
 with open(file_path, "r") as f:
     telemetry = json.load(f)
 
 df = pd.DataFrame(telemetry)
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
